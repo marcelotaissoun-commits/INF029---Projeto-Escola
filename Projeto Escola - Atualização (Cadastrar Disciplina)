@@ -192,7 +192,7 @@ void cadastrar_disciplina(disciplina *d) {
     printf("Insira o nome da disciplina: ");
     fgets(d->nome, MAX_N, stdin);
     fflush(stdin);
-
+    
     printf("Insira o codigo da disciplina: ");
     scanf("%d", &(d->codigo));
     fflush(stdin);
@@ -204,15 +204,6 @@ void cadastrar_disciplina(disciplina *d) {
     printf("Insira a quantidade de vagas: ");
     scanf("%d", &(d->vagas));
     fflush(stdin);
-
-    printf("\n--- Cadastro do Professor ---\n");
-    cadastrar_pessoa(&(d->professor));
-
-    printf("\n--- Cadastro dos Alunos ---\n");
-    for (int i = 0; i < d->vagas && i < TAM; i++) {
-        printf("\nAluno %d:\n", i + 1);
-        cadastrar_pessoa(&(d->alunos[i]));
-    }
 }
 int menu_listar(char c[MAX_N]) {
 	int opcao;
