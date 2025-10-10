@@ -1,0 +1,110 @@
+void cadastrar_disciplina(disciplina *d, int *qtd, pessoa prof[TAM], int qtd_p) {
+	int mat_prof, pos; //pos ARMAZENA A POSIÇÃO RETORNADA POR buscar_pessoa.
+	if (tam_lista(*qtd) == LISTA_CHEIA) { //VERIFICA SE O SETOR DE DISCIPLINAS ESTÁ CHEIO.
+		printf("Lista de disciplinas cheia!\n");
+	} else {
+		printf("Insira o nome da disciplina: ");
+		fgets(d->nome, MAX_N, stdin); //ARMAZENA A DISCIPLINA.
+		fflush(stdin); //LIMPA O BUFFER DE ENTRADA; OCORRE EM TODOS OS USOS DE fflush.
+		formatar_nome(d->nome); //NORMALIZA O NOME.
+		printf("Insira o codigo da disciplina: ");
+		scanf("%d", &(d->codigo));
+		fflush(stdin); 
+
+		printf("Insira o semestre: ");
+		scanf("%d", &(d->semestre));
+		fflush(stdin);
+
+		printf("Insira a quantidade de vagas: ");
+		scanf("%d", &(d->vagas));
+		fflush(stdin);
+		do { //INICIA O LOOP PARA GARANTIR QUE O PROFESSOR INFORMADO JÁ ESTEJA CADASTRADO.
+			printf("Insira a matrícula do professor: ");
+			scanf("%d", &mat_prof);
+			fflush(stdin);
+			pos = buscar_pessoa(prof, qtd_p, mat_prof); //CHAMA buscar_pessoa NO VETOR prof PARA LOCALIZAR MATRÍCULA, RETORNANDO O ÍNDICE OU-1.
+			if (pos < 0)
+				printf("Não foi possível achar o professor!");
+			else
+				strcpy(d->professor.nome, prof[pos].nome); //COPIA APENAS O NOME DO PROFESSOR DO VETOR prof (NÃO COPIA A ESTRUTURA pessoa TODA).
+		} while (pos < 0); //REPETE O LOOP ATÉ ENCONTRAR UM PROFESSOR VÁLIDO (pos >= 0).
+		*qtd = *qtd + 1; //INCREMENTA A QUANTIDADE DE DISCIPLINAS CADASTRADAS.
+		printf("Disciplina cadastrada com sucesso!\n");
+	}
+}
+
+void atualizar_disciplina(disciplina d[TAM], int qtd, pessoa prof[TAM], int qtd_p) {
+    int pos, opcao, codigo, mat_prof, pos_prof;
+    char nome[MAX_N]; //BUFFER PARA LEITURA DE NOVO NOME DA DISCIPLINA.
+    
+    if (tam_lista(qtd) == LISTA_VAZIA) { //VERIFICA SE NÃO HÁ DISCIPLINAS CADASTRADAS.
+        printf("Lista Vazia!\n");
+    } else {
+        do { //INÍCIO DO LOOP QUE GARANTE REPETIÇÃO CASO DISCIPLINA SEJA INVÁLIDA OU INEXISTENTE.
+            printf("Insira o código da disciplina: ");
+            scanf("%d", &codigo);
+            fflush(stdin);
+            
+            // Buscar disciplina pelo código
+            pos = -1;
+            for (int i = 0; i < qtd; i++) { //LOOP SOBRE AS DISCIPLINAS CADASTRADAS.
+                if (codigo == d[i].codigo) {
+                    pos = i; //GRAVA A POSIÇÃO DA DISCIPLINA EM pos, APÓS COMPARAÇÃO DO CÓDIGO LIDO COM O CÓDIGO DA DISCIPLINA i.
+                    break;
+                }
+            }
+            
+            if (pos < 0) {
+                printf("Código não encontrado.\n");
+            } else {
+                printf("Selecione o dado a ser alterado:\n"); //EXIBE AS OPÇÕES DE ESCOLHA DO USUÁRIO.
+                printf("1 - Nome\n");
+                printf("2 - Código\n");
+                printf("3 - Semestre\n");
+                printf("4 - Vagas\n");
+                printf("5 - Professor\n");
+                scanf("%d", &opcao);
+                fflush(stdin);
+                
+                switch (opcao) {
+                    case 1:
+                        printf("Insira o novo nome: ");
+                        fgets(nome, MAX_N, stdin);
+                        fflush(stdin);
+                        strcpy(d[pos].nome, nome); //CASO O USUÁRIO TENHA ESCOLHIDO ALTERAR O NOME, COPIA O NOME INSERIDO PARA d[pos].nome.
+                        break;
+                    case 2:
+                        printf("Insira o novo código: ");
+                        scanf("%d", &d[pos].codigo); //CASO O USUÁRIO TENHA ESCOLHIDO ALTERAR O CÓDIGO, ARMAZENA O CÓDIGO INSERIDO EM d[pos].codigo.
+                        fflush(stdin);
+                        break;
+                    case 3:
+                        printf("Insira o novo semestre: ");
+                        scanf("%d", &d[pos].semestre);
+                        fflush(stdin);
+                        break;
+                    case 4:
+                        printf("Insira a nova quantidade de vagas: ");
+                        scanf("%d", &d[pos].vagas);
+                        fflush(stdin);
+                        break;
+                    case 5:
+                        do { //LOOP PARA GARANTIR QUE SEJA INSERIDO UM PROFESSOR VÁLIDO.
+                            printf("Insira a matrícula do novo professor: ");
+                            scanf("%d", &mat_prof);
+                            fflush(stdin);
+                            pos_prof = buscar_pessoa(prof, qtd_p, mat_prof); //BUSCA O PROFESSOR NO VETOR prof.
+                            if (pos_prof < 0)
+                                printf("Não foi possível achar o professor!\n"); 
+                            else
+                                d[pos].professor = prof[pos_prof]; //COPIA A ESTRUTURA pessoa INTEIRA DO VETOR prof PARA d[pos].professor, FAZENDO ATRIBUIÇÃO COMPLETA (PRESERVA cpf, matrícula, ETC).
+                        } while (pos_prof < 0); //REPETE ATÉ QUE HAJA UM PROFESSOR VÁLIDO.
+                        break;
+                    default: 
+                        printf("Opção inválida!\n");
+                }
+            }
+        } while (pos < 0 && (opcao < 1 || opcao > 5)); //CONTROLA REPETIÇÃO EXTERNA, REPETINDO SE pos FOR MENOR QUE ZERO, e opção FOR MENOR QUE 1 OU MAIOR QUE 5.
+        printf("\nDados alterados com sucesso!\n");
+    }
+}
