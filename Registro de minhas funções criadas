@@ -108,3 +108,47 @@ void atualizar_disciplina(disciplina d[TAM], int qtd, pessoa prof[TAM], int qtd_
         printf("\nDados alterados com sucesso!\n");
     }
 }
+void excluir_disciplina(disciplina *d, int *qtd_d, pessoa *a, int qtd_a) {
+
+ int pos, pos_a, codigo;
+ if (!tam_lista(*qtd_d)) {
+     printf("Lista Vazia!\n");
+     } else {
+         do {
+            printf("Informe o código da disciplina: ");
+            scanf("%d", &codigo);
+            pos = buscar_disciplina(d, *qtd_d, codigo);
+            if (pos < 0) {
+                printf("Não foi possível encontrar a disciplina.\n");
+            } else {             
+                printf("Disciplina encontrada: [%d] %s\n", d[pos].codigo, d[pos].nome);
+                printf("Semestre: %d | Vagas: %d | Matriculados: %d\n", d[pos].semestre, d[pos].vagas, d[pos].qtd_alunos);
+                printf("Deseja realmente excluir esta disciplina? (S/N): ");
+                while (getchar() != '\n');
+                char resp = getchar();
+                if (resp == 'S' || resp == 's') {
+                    for (int i = 0; i < d[pos].qtd_alunos; i++) {
+                        int mat = d[pos].alunos[i].matricula;
+                        pos_a = buscar_pessoa(a, qtd_a, mat);
+                        if (pos_a >= 0) {
+                            if (a[pos_a].qtd_displinas > 0)
+                                a[pos_a].qtd_displinas--;
+                        }
+                    }
+         
+                    if (d[pos].alunos != NULL) {
+                        free(d[pos].alunos);
+                        d[pos].alunos = NULL;
+                    }
+                    for (int j = pos; j < *qtd_d - 1; j++) {
+                        d[j] = d[j + 1];
+                    }
+                    *qtd_d = *qtd_d - 1;
+                    printf("Disciplina excluída com sucesso!\n");
+                } else {
+                    printf("Operação cancelada.\n");
+                }
+            }
+        } while (pos < 0);
+    }
+}
