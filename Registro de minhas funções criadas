@@ -152,3 +152,27 @@ void excluir_disciplina(disciplina *d, int *qtd_d, pessoa *a, int qtd_a) {
         } while (pos < 0);
     }
 }
+
+listar_disciplinas_extrapolam_40_vagas(disciplina d[TAM], int qtd) {
+    int encontrou = 0;
+
+    if (tam_lista(qtd) == LISTA_VAZIA) {
+        printf("Lista Vazia!\n");
+    } else {
+        printf("Disciplinas com mais de 40 vagas\n\n");
+        for (int i = 0; i < qtd; i++) {
+            if (d[i].vagas > 40) {
+                printf("Nome: %s\n", d[i].nome);
+                printf("Código: %d\n", d[i].codigo);
+                printf("Semestre: %d\n", d[i].semestre);
+                printf("Vagas: %d\n", d[i].vagas);
+                printf("Professor: %s\n", d[i].professor.nome);
+                printf("---------------------------------------------\n");
+                encontrou = 1;
+            }
+        }
+        if (!encontrou) {
+            printf("Nenhuma disciplina possui mais de 40 vagas.\n");
+        }
+    }
+}
